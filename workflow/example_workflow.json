@@ -1,0 +1,1056 @@
+{
+  "id": "d74f7ce3-49a9-4a6b-8f96-3200a87857bd",
+  "revision": 0,
+  "last_node_id": 52,
+  "last_link_id": 98,
+  "nodes": [
+    {
+      "id": 37,
+      "type": "DanbooruSmartMart",
+      "pos": [
+        -1055.9430254652943,
+        494.33392211142893
+      ],
+      "size": [
+        400,
+        1326
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "json_string",
+          "type": "STRING",
+          "widget": {
+            "name": "json_string"
+          },
+          "link": 57
+        }
+      ],
+      "outputs": [
+        {
+          "name": "帶有體重標註的體型標籤",
+          "type": "STRING",
+          "links": [
+            78
+          ]
+        },
+        {
+          "name": "畫師標籤",
+          "type": "STRING",
+          "links": [
+            79
+          ]
+        },
+        {
+          "name": "風格描述",
+          "type": "STRING",
+          "links": [
+            80
+          ]
+        },
+        {
+          "name": "背景",
+          "type": "STRING",
+          "links": [
+            81
+          ]
+        },
+        {
+          "name": "具體環境",
+          "type": "STRING",
+          "links": [
+            82
+          ]
+        },
+        {
+          "name": "相機視角",
+          "type": "STRING",
+          "links": [
+            83
+          ]
+        },
+        {
+          "name": "心情和氛圍",
+          "type": "STRING",
+          "links": [
+            84
+          ]
+        },
+        {
+          "name": "光照條件",
+          "type": "STRING",
+          "links": [
+            85
+          ]
+        },
+        {
+          "name": "畫面質量提示詞",
+          "type": "STRING",
+          "links": [
+            86
+          ]
+        },
+        {
+          "name": "場景中的重要物體",
+          "type": "STRING",
+          "links": [
+            87
+          ]
+        },
+        {
+          "name": "其他 Danbooru 標籤",
+          "type": "STRING",
+          "links": [
+            88
+          ]
+        },
+        {
+          "name": "外觀描述",
+          "type": "STRING",
+          "links": [
+            71
+          ]
+        },
+        {
+          "name": "服飾及配件",
+          "type": "STRING",
+          "links": [
+            72
+          ]
+        },
+        {
+          "name": "臉部表情和情緒",
+          "type": "STRING",
+          "links": [
+            73
+          ]
+        },
+        {
+          "name": "姿勢，動作，手勢，活動",
+          "type": "STRING",
+          "links": [
+            74
+          ]
+        },
+        {
+          "name": "與他人/物件/環境的互動",
+          "type": "STRING",
+          "links": [
+            75
+          ]
+        },
+        {
+          "name": "畫面中的位置（中心，左側，前景等）",
+          "type": "STRING",
+          "links": [
+            76
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DanbooruSmartMart"
+      },
+      "widgets_values": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 44,
+      "type": "NewBieGeneralTagsBuilder",
+      "pos": [
+        -522.4651701699405,
+        811.5950542528818
+      ],
+      "size": [
+        400,
+        652.0000000000001
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "body_type",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "body_type"
+          },
+          "link": 78
+        },
+        {
+          "name": "artists",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "artists"
+          },
+          "link": 79
+        },
+        {
+          "name": "style",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "style"
+          },
+          "link": 80
+        },
+        {
+          "name": "background",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "background"
+          },
+          "link": 81
+        },
+        {
+          "name": "environment",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "environment"
+          },
+          "link": 82
+        },
+        {
+          "name": "perspective",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "perspective"
+          },
+          "link": 83
+        },
+        {
+          "name": "atmosphere",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "atmosphere"
+          },
+          "link": 84
+        },
+        {
+          "name": "lighting",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "lighting"
+          },
+          "link": 85
+        },
+        {
+          "name": "quality",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "quality"
+          },
+          "link": 86
+        },
+        {
+          "name": "objects",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "objects"
+          },
+          "link": 87
+        },
+        {
+          "name": "extra_tags",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "extra_tags"
+          },
+          "link": 88
+        }
+      ],
+      "outputs": [
+        {
+          "name": "general_tags",
+          "type": "GENERAL_TAGS_XML",
+          "links": [
+            95
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "NewBieAI-Lab/ComfyUI-Newbie-Nodes",
+        "ver": "4b420741946d5243b2fed9561ccc9fa699675669",
+        "Node name for S&R": "NewBieGeneralTagsBuilder"
+      },
+      "widgets_values": [
+        "1girl, solo",
+        "",
+        "",
+        "anime style",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "high quality illustration, clean lineart, no logo, no watermark",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 48,
+      "type": "PrimitiveStringMultiline",
+      "pos": [
+        250.23866194011032,
+        497.6621449313323
+      ],
+      "size": [
+        414.7558226897072,
+        103.11645379413972
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            91
+          ]
+        }
+      ],
+      "title": "Prompt Template",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.5.1",
+        "Node name for S&R": "PrimitiveStringMultiline",
+        "enableTabs": false,
+        "tabWidth": 65,
+        "tabXOffset": 10,
+        "hasSecondTab": false,
+        "secondTabText": "Send Back",
+        "secondTabOffset": 80,
+        "secondTabWidth": 65
+      },
+      "widgets_values": [
+        "You are an assistant designed to generate high-quality anime images with the highest degree of image-text alignment based on xml format textual prompts.\n<Prompt Start>\n"
+      ]
+    },
+    {
+      "id": 49,
+      "type": "NewBieXMLPromptAssembler",
+      "pos": [
+        330.94967228832013,
+        812.0132511722528
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "character_1",
+          "shape": 7,
+          "type": "CHARACTER_XML",
+          "link": 94
+        },
+        {
+          "name": "character_2",
+          "shape": 7,
+          "type": "CHARACTER_XML",
+          "link": null
+        },
+        {
+          "name": "character_3",
+          "shape": 7,
+          "type": "CHARACTER_XML",
+          "link": null
+        },
+        {
+          "name": "character_4",
+          "shape": 7,
+          "type": "CHARACTER_XML",
+          "link": null
+        },
+        {
+          "name": "general_tags",
+          "shape": 7,
+          "type": "GENERAL_TAGS_XML",
+          "link": 95
+        }
+      ],
+      "outputs": [
+        {
+          "name": "xml_prompt",
+          "type": "STRING",
+          "links": [
+            96,
+            97
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "NewBieAI-Lab/ComfyUI-Newbie-Nodes",
+        "ver": "4b420741946d5243b2fed9561ccc9fa699675669",
+        "Node name for S&R": "NewBieXMLPromptAssembler"
+      },
+      "widgets_values": [
+        "",
+        "style of mikozin"
+      ]
+    },
+    {
+      "id": 50,
+      "type": "easy showAnything",
+      "pos": [
+        1296.2710819311371,
+        480.7717479672414
+      ],
+      "size": [
+        906.3737670432731,
+        957.742874009275
+      ],
+      "flags": {
+        "pinned": true
+      },
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 98
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "title": "finally condition",
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "7c470c67d6df44498e52c902173c1ac77cd5bdfd",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "You are an assistant designed to generate high-quality anime images with the highest degree of image-text alignment based on xml format textual prompts.\n<Prompt Start>\n<style>style of mikozin</style>\n\n<image>\n  <caption/>\n  <character_1>\n    <n/>\n    <gender>1girl</gender>\n  </character_1>\n  <general_tags>\n    <count>1girl, solo</count>\n  </general_tags>\n</image>"
+      ]
+    },
+    {
+      "id": 36,
+      "type": "easy showAnything",
+      "pos": [
+        -2123.880277704219,
+        824.572318231845
+      ],
+      "size": [
+        409.05301730656333,
+        358.9706098651916
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 36
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "7c470c67d6df44498e52c902173c1ac77cd5bdfd",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "自動將 AI 繪圖提示詞（Prompts）依據 Danbooru 標籤屬性，智慧清洗並分類為 JSON 格式輸出。輸出期待輸出到 Newbie_image_danbooru_tags (Parser) 節點的 JSON 格式。該節點為 Newbie_Nodes 設計，希望以編寫 Tags 的方式編寫 XML，如果你沒有 Newbie_Nodes 節點包，這個自訂節點將毫無意義。\n\n1. text:\n   輸入要分類的提示詞文字，以英文逗號 (,) 分隔。\n\n2. no_output_if_not_corresponding:\n   - False (預設): 字典未收錄且無法辨識的詞，統一歸類至「其他 Danbooru 標籤」。\n   - True: 隱藏未收錄或無法辨識的詞，不輸出。\n\n3. clean_and_inflection:\n   - True (預設): 智慧「卸妝」模式。自動拔除髒資料（斜線、不完整括號等），並自動還原單字變體（如複數 s/es/ies、動詞 ing/ed、副詞 ly、重複尾音等）。\n   - False: 關閉。嚴格比對原始文字。\n\n4. fuzzy_definition:\n   - True (預設): 啟用智慧拆詞根。若遇到字典沒有的長複合詞，會以「字尾優先」雙向拆解底線(_)、空格( )與減號(-)來推斷分類。\n   - False: 關閉。非精確匹配的標籤將不予處置。"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "easy showAnything",
+      "pos": [
+        -1631.2850101033277,
+        493.11945680317166
+      ],
+      "size": [
+        493.97419604528386,
+        841.780113633215
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": [
+            57
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "7c470c67d6df44498e52c902173c1ac77cd5bdfd",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "{}"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "wrapper",
+      "pos": [
+        -2121.1706731876857,
+        495.1637545143332
+      ],
+      "size": [
+        403.0511073777541,
+        224.40885902203274
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "classification_json",
+          "type": "STRING",
+          "links": [
+            1
+          ]
+        },
+        {
+          "name": "help_text",
+          "type": "STRING",
+          "links": [
+            36
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "wrapper"
+      },
+      "widgets_values": [
+        "",
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "id": 46,
+      "type": "StringConcatenate",
+      "pos": [
+        830.3053792474092,
+        484.2754688655191
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "string_a",
+          "type": "STRING",
+          "widget": {
+            "name": "string_a"
+          },
+          "link": 91
+        },
+        {
+          "name": "string_b",
+          "type": "STRING",
+          "widget": {
+            "name": "string_b"
+          },
+          "link": 97
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            98
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.14.1",
+        "Node name for S&R": "StringConcatenate"
+      },
+      "widgets_values": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 43,
+      "type": "NewBieCharacterBuilder",
+      "pos": [
+        -96.64205599534026,
+        813.1649363713509
+      ],
+      "size": [
+        400,
+        430
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "appearance",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "appearance"
+          },
+          "link": 71
+        },
+        {
+          "name": "clothing",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "clothing"
+          },
+          "link": 72
+        },
+        {
+          "name": "expression",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "expression"
+          },
+          "link": 73
+        },
+        {
+          "name": "action",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "action"
+          },
+          "link": 74
+        },
+        {
+          "name": "interaction",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "interaction"
+          },
+          "link": 75
+        },
+        {
+          "name": "position",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "position"
+          },
+          "link": 76
+        }
+      ],
+      "outputs": [
+        {
+          "name": "character",
+          "type": "CHARACTER_XML",
+          "links": [
+            94
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "NewBieAI-Lab/ComfyUI-Newbie-Nodes",
+        "ver": "4b420741946d5243b2fed9561ccc9fa699675669",
+        "Node name for S&R": "NewBieCharacterBuilder"
+      },
+      "widgets_values": [
+        1,
+        "",
+        "1girl",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 45,
+      "type": "easy showAnything",
+      "pos": [
+        862.1347637634037,
+        859.6514495533471
+      ],
+      "size": [
+        140,
+        26
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 96
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "7c470c67d6df44498e52c902173c1ac77cd5bdfd",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "<style>style of mikozin</style>\n\n<image>\n  <caption/>\n  <character_1>\n    <n/>\n    <gender>1girl</gender>\n  </character_1>\n  <general_tags>\n    <count>1girl, solo</count>\n  </general_tags>\n</image>"
+      ]
+    },
+    {
+      "id": 51,
+      "type": "MarkdownNote",
+      "pos": [
+        754.9217105698352,
+        929.822232816424
+      ],
+      "size": [
+        337.8936956113988,
+        144.87539992362485
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# <---\n# 你可以在這裡編寫自然語言\n# You can write the caption here."
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 52,
+      "type": "MarkdownNote",
+      "pos": [
+        -2466.9213071333406,
+        572.0151770620655
+      ],
+      "size": [
+        306.855420487007,
+        153.89011309860348
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "# -------------------------->\n# 你可以在這邊寫tags。\n# You can write the tags here."
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      3,
+      0,
+      "STRING"
+    ],
+    [
+      36,
+      1,
+      1,
+      36,
+      0,
+      "STRING"
+    ],
+    [
+      57,
+      3,
+      0,
+      37,
+      0,
+      "STRING"
+    ],
+    [
+      71,
+      37,
+      11,
+      43,
+      0,
+      "STRING"
+    ],
+    [
+      72,
+      37,
+      12,
+      43,
+      1,
+      "STRING"
+    ],
+    [
+      73,
+      37,
+      13,
+      43,
+      2,
+      "STRING"
+    ],
+    [
+      74,
+      37,
+      14,
+      43,
+      3,
+      "STRING"
+    ],
+    [
+      75,
+      37,
+      15,
+      43,
+      4,
+      "STRING"
+    ],
+    [
+      76,
+      37,
+      16,
+      43,
+      5,
+      "STRING"
+    ],
+    [
+      78,
+      37,
+      0,
+      44,
+      0,
+      "STRING"
+    ],
+    [
+      79,
+      37,
+      1,
+      44,
+      1,
+      "STRING"
+    ],
+    [
+      80,
+      37,
+      2,
+      44,
+      2,
+      "STRING"
+    ],
+    [
+      81,
+      37,
+      3,
+      44,
+      3,
+      "STRING"
+    ],
+    [
+      82,
+      37,
+      4,
+      44,
+      4,
+      "STRING"
+    ],
+    [
+      83,
+      37,
+      5,
+      44,
+      5,
+      "STRING"
+    ],
+    [
+      84,
+      37,
+      6,
+      44,
+      6,
+      "STRING"
+    ],
+    [
+      85,
+      37,
+      7,
+      44,
+      7,
+      "STRING"
+    ],
+    [
+      86,
+      37,
+      8,
+      44,
+      8,
+      "STRING"
+    ],
+    [
+      87,
+      37,
+      9,
+      44,
+      9,
+      "STRING"
+    ],
+    [
+      88,
+      37,
+      10,
+      44,
+      10,
+      "STRING"
+    ],
+    [
+      91,
+      48,
+      0,
+      46,
+      0,
+      "STRING"
+    ],
+    [
+      94,
+      43,
+      0,
+      49,
+      0,
+      "CHARACTER_XML"
+    ],
+    [
+      95,
+      44,
+      0,
+      49,
+      4,
+      "GENERAL_TAGS_XML"
+    ],
+    [
+      96,
+      49,
+      0,
+      45,
+      0,
+      "STRING"
+    ],
+    [
+      97,
+      49,
+      0,
+      46,
+      1,
+      "STRING"
+    ],
+    [
+      98,
+      46,
+      0,
+      50,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 0.4594972986357408,
+      "offset": [
+        3353.1517585771344,
+        -197.99356350553705
+      ]
+    },
+    "frontendVersion": "1.39.14",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
