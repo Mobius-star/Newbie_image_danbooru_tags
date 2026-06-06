@@ -17,10 +17,10 @@
    "臉部表情和情緒",
    "姿勢，動作，手勢，活動",
    "與他人/物件/環境的互動",
-   "畫面中的位置（中心，left，前景等）"
+   "畫面中的位置（中心，左側，前景等）"
 
-特別感謝 https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/tree/main的 danbooru_tags.csv
-與 https://tags.novelai.dev/，所有tags都來源自這裡。
+特別感謝 https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/tree/main 的 danbooru_tags.csv
+與 https://tags.novelai.dev/ ，所有tags都來源自這裡。
 
 [HELP_START]
 
