@@ -89,7 +89,7 @@ def load_tag_mapping(directory):
     _tag_mapping_cache = mapping
     _stem_category_cache = stem_to_category
     _tag_dir_cache = directory
-    return mapping, stem_to_category
+    return mapping, {}
 
 
 def make_stems(word):
@@ -231,7 +231,7 @@ class WrapperNode:
             "臉部表情和情緒",
             "姿勢，動作，手勢，活動",
             "與他人/物件/環境的互動",
-            "畫面中的位置（中心，左側，前景等）"  # <--- 【已修正】完美對齊 Parser 節點！
+            "畫面中的位置（中心，左側，前景等）"
         ]
 
         grouped = defaultdict(list)
@@ -258,6 +258,7 @@ class WrapperNode:
         """漏斗過濾流程方法"""
         tag = tag.lower().strip()
 
+        # 基礎匹配
         for stem in make_stems(tag):
             if stem in mapping:
                 return mapping[stem]
@@ -268,9 +269,20 @@ class WrapperNode:
                 if stem in mapping:
                     return mapping[stem]
 
+        # 智慧清洗層（新增：智慧剝離權重括號核心補丁）
         if clean_inflection:
-            cleaned = tag.replace("/", "").replace("\\", "")
-            cleaned = re.sub(r'\([^)]*\)', '', cleaned)
+            cleaned = tag.strip()
+            
+            # 使用高階正則表達式判定：是否為權重括號 (tag:1.2) 或純強調括號 (tag)
+            # 它會智慧捕獲中間的 tag 本體，切除冒號與數字，不傷及無辜
+            weight_match = re.match(r'^\(([^:]+)(?::\d+(?:\.\d+)?)?\)$', cleaned)
+            if weight_match:
+                cleaned = weight_match.group(1).strip()
+            else:
+                # 若不是標準兩端包裹的權重括號，則執行普通髒字元移除（斜線與多重括號等）
+                cleaned = cleaned.replace("/", "").replace("\\", "")
+                cleaned = re.sub(r'\([^)]*\)', '', cleaned)
+            
             cleaned = cleaned.strip("_ ")
             
             if cleaned:
@@ -278,8 +290,11 @@ class WrapperNode:
                     if stem in mapping:
                         return mapping[stem]
 
+        # 模糊推斷層
         if fuzzy:
-            parts = [p for p in re.split(r'[ _\-]+', tag) if p]
+            # 如果上面清洗過後有核心主體，優先拿清洗後的詞去拆詞根
+            target_tag = cleaned if (clean_inflection and 'cleaned' in locals() and cleaned) else tag
+            parts = [p for p in re.split(r'[ _\-]+', target_tag) if p]
             if not parts:
                 return None
 
