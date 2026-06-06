@@ -22,6 +22,10 @@
 特別感謝 https://huggingface.co/datasets/newtextdoc1111/danbooru-tag-csv/tree/main 的 danbooru_tags.csv
 與 https://tags.novelai.dev/ ，所有tags都來源自這裡。
 
+[v1.0.1] - 2026-06-06 : fix(wrapper): 修正智慧清洗邏輯以支援單獨括號與權重格式
+- 修正了原本正則表達式會將單獨括號字串全數抹除導致分類歸入「其他」的 Bug。
+- 新增條件分流：若是標準權重或強調括號則進行智慧脫殼保留核心詞；若為提示詞尾巴的附帶括號則維持原抹除邏輯。
+
 [HELP_START]
 
 自動將 AI 繪圖提示詞（Prompts）依據 Danbooru 標籤屬性，智慧清洗並分類為 JSON 格式輸出。輸出期待輸出到 Newbie_image_danbooru_tags (Parser) 節點的 JSON 格式。該節點為 Newbie_Nodes 設計，希望以編寫 Tags 的方式編寫 XML，如果你沒有 Newbie_Nodes 節點包，這個自訂節點將毫無意義。
