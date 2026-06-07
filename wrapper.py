@@ -4,31 +4,32 @@ import re
 from collections import OrderedDict, defaultdict
 
 # ==========================================
-# 1. 全域快取與工具函數層級 (最外層)
+# 1. 全域快取與工具函數
 # ==========================================
 _tag_mapping_cache = None
 _stem_category_cache = None
 _tag_dir_cache = None
+_tag_metadata_cache = None   # tag -> {"category": str, "source_file": str}
 
 def safe_category(cat):
-    """確保分類值是字串（若為 list 則合併成字串）"""
     if isinstance(cat, list):
         return ", ".join(str(c) for c in cat)
     return str(cat) if cat is not None else ""
 
 def load_tag_mapping(directory):
-    global _tag_mapping_cache, _stem_category_cache, _tag_dir_cache
+    global _tag_mapping_cache, _stem_category_cache, _tag_dir_cache, _tag_metadata_cache
     if _tag_dir_cache == directory and _tag_mapping_cache is not None:
-        return _tag_mapping_cache, _stem_category_cache
+        return _tag_mapping_cache, _stem_category_cache, _tag_metadata_cache
 
     mapping = {}
+    tag_metadata = {}
     if not os.path.isdir(directory):
         _tag_mapping_cache = mapping
         _stem_category_cache = {}
+        _tag_metadata_cache = tag_metadata
         _tag_dir_cache = directory
-        return mapping, {}
+        return mapping, {}, tag_metadata
 
-    # 讀取所有 JSON
     for fname in os.listdir(directory):
         if not fname.endswith(".json"):
             continue
@@ -36,7 +37,8 @@ def load_tag_mapping(directory):
         try:
             with open(fpath, "r", encoding="utf-8") as f:
                 data = json.load(f)
-        except Exception:
+        except Exception as e:
+            print(f"[Wrapper] 讀取 {fpath} 失敗: {e}")
             continue
 
         if isinstance(data, dict):
@@ -46,13 +48,21 @@ def load_tag_mapping(directory):
                 cat_str = safe_category(category)
                 if tag not in mapping and cat_str:
                     mapping[tag] = cat_str
+                    tag_metadata[tag] = {
+                        "category": cat_str,
+                        "source_file": fname,
+                    }
         elif isinstance(data, list):
             category = os.path.splitext(fname)[0]
             for tag in data:
                 if isinstance(tag, str) and tag not in mapping:
                     mapping[tag] = category
+                    tag_metadata[tag] = {
+                        "category": category,
+                        "source_file": fname,
+                    }
 
-    # 手動覆蓋機制
+    # 手動覆蓋機制 (overrides.json)
     override_path = os.path.join(directory, "overrides.json")
     if os.path.isfile(override_path):
         try:
@@ -63,6 +73,10 @@ def load_tag_mapping(directory):
                     cat_str = safe_category(category)
                     if isinstance(tag, str) and cat_str:
                         mapping[tag] = cat_str
+                        tag_metadata[tag] = {
+                            "category": cat_str,
+                            "source_file": "overrides.json",
+                        }
         except Exception as e:
             print(f"[Wrapper] 讀取 overrides.json 失敗: {e}")
 
@@ -88,19 +102,17 @@ def load_tag_mapping(directory):
 
     _tag_mapping_cache = mapping
     _stem_category_cache = stem_to_category
+    _tag_metadata_cache = tag_metadata
     _tag_dir_cache = directory
-    return mapping, {}
+    return mapping, stem_to_category, tag_metadata
 
 
 def make_stems(word):
-    """
-    詞形變化（安全強化版）：
-    - 嚴格控制重複尾音還原，避免誤傷 dress, glass, ass 等正常單字。
-    """
+    """詞形變化（完整版）"""
+    original = word
     stems = [word]
-    has_suffix = False  # 標記是否真的進行了後綴截斷
+    has_suffix = False
 
-    # 1. 原有 s/es 分支
     if word.endswith("es"):
         stems.append(word[:-2])
         stems.append(word[:-1])
@@ -109,49 +121,67 @@ def make_stems(word):
         stems.append(word[:-1])
         has_suffix = True
 
-    # 2. 原有 ed 分支
     if word.endswith("ed"):
         stems.append(word[:-2])
         stems.append(word[:-1])
         has_suffix = True
 
-    # 3. 原有 ing 分支
     if word.endswith("ing"):
         stems.append(word[:-3])
         has_suffix = True
 
-    # 4. 新增 -ly 結尾
     if word.endswith("ly"):
         stems.append(word[:-2])
         has_suffix = True
 
-    # 5. 新增 -ies 結尾轉為 y
     if word.endswith("ies"):
         stems.append(word[:-3] + "y")
         has_suffix = True
 
-    # 6. 安全的重複尾音還原
+    if word.endswith("ves") and len(word) > 4 and word not in ("saves", "waves", "caves", "loves", "moves"):
+        stems.append(word[:-3] + "f")
+        stems.append(word[:-3] + "fe")
+        has_suffix = True
+
+    if word.endswith("ices") and len(word) > 5:
+        stems.append(word[:-4] + "ex")
+        stems.append(word[:-4] + "ix")
+        has_suffix = True
+
+    if word.endswith("er") and len(word) > 3:
+        stems.append(word[:-2])
+        has_suffix = True
+    if word.endswith("est") and len(word) > 4:
+        stems.append(word[:-3])
+        has_suffix = True
+
+    if word.endswith("lly") and len(word) > 4:
+        stems.append(word[:-2])
+        has_suffix = True
+
     if has_suffix:
         extra = []
+        forbidden_pairs = {'ll', 'ff', 'ee', 'oo', 'ss'}
         for s in stems:
             if len(s) >= 3 and s[-1] == s[-2]:
-                if s[-1] != 's':  # 排除 ss 結尾
+                pair = s[-2:]
+                if pair in forbidden_pairs:
+                    continue
+                if len(s) - 1 >= 3:
                     extra.append(s[:-1])
         stems.extend(extra)
 
-    # 去重並保留順序
     seen = set()
     out = []
     for s in stems:
+        if len(original) >= 3 and len(s) < 3:
+            continue
         if s not in seen:
             seen.add(s)
             out.append(s)
     return out
 
 
-# ==========================================
-# 2. 類別定義與其方法層級 (WrapperNode 內部)
-# ==========================================
 class WrapperNode:
     CATEGORY = "Newbie_image_danbooru_tags"
 
@@ -166,35 +196,27 @@ class WrapperNode:
             }
         }
 
-    RETURN_TYPES = ("STRING", "STRING")
-    RETURN_NAMES = ("classification_json", "help_text")
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("classification_json", "help_text", "confirmed_type_and_mapping")
     FUNCTION = "classify_tags"
 
     @staticmethod
     def _normalize_category(cat: str) -> str:
-        """將分類字串中的半角括號統一轉為全角括號，並統一將常見的舊命名形式修正，與 category_order 保持一致"""
         if not cat:
             return cat
-        # 1. 先處理全半角括號
         cat = cat.replace("(", "（").replace(")", "）")
-        # 2. 強大防禦：如果使用者的詞典檔案裡寫的是舊命名，在這裡自動對齊，避免使用者需要手動翻修幾萬行的 JSON！
         if cat == "畫面中的位置" or cat == "畫面中的位置（中心，left，前景等）":
             return "畫面中的位置（中心，左側，前景等）"
         return cat
 
     def _read_help_from_readme(self, node_dir):
-        """從同目錄的 README.md 中讀取 [HELP_START] 與 [HELP_END] 之間的內容"""
         readme_path = os.path.join(node_dir, "README.md")
         default_help = "未找到說明文件。請確保節點目錄下存在 README.md 且包含 [HELP_START] 標記。"
-        
         if not os.path.isfile(readme_path):
             return default_help
-
         try:
             with open(readme_path, "r", encoding="utf-8") as f:
                 content = f.read()
-            
-            # 使用正規表達式撈取標記中間的文字
             match = re.search(r'\[HELP_START\](.*?)\[HELP_END\]', content, re.DOTALL)
             if match:
                 return match.group(1).strip()
@@ -202,18 +224,116 @@ class WrapperNode:
         except Exception as e:
             return f"讀取說明文件時發生錯誤: {str(e)}"
 
+    def _get_tag_trace(self, tag, mapping, stem_category, tag_metadata, fuzzy, clean_inflection):
+        """返回 (category, trace_string)，trace 包含来源文件名"""
+        original_tag = tag
+        tag = tag.lower().strip()
+        trace_parts = []
+
+        # 第一层：绝对原样匹配
+        if tag in mapping:
+            cat = mapping[tag]
+            src = tag_metadata.get(tag, {}).get("source_file", "unknown")
+            trace_parts.append(f"原始匹配: '{tag}' (來源: {src})")
+            return cat, " -> ".join(trace_parts) + f" -> {cat}"
+
+        tag_underscored = tag.replace(" ", "_")
+        if tag_underscored != tag and tag_underscored in mapping:
+            cat = mapping[tag_underscored]
+            src = tag_metadata.get(tag_underscored, {}).get("source_file", "unknown")
+            trace_parts.append(f"下劃線匹配: '{tag_underscored}' (來源: {src})")
+            return cat, " -> ".join(trace_parts) + f" -> {cat}"
+
+        # 第二层：智慧清洗后原样匹配
+        cleaned = None
+        if clean_inflection:
+            cleaned = tag.strip()
+            weight_match = re.match(r'^\(([^:]+)(?::\d+(?:\.\d+)?)?\)$', cleaned)
+            if weight_match:
+                cleaned = weight_match.group(1).strip()
+                trace_parts.append(f"權重清洗: '{cleaned}'")
+            else:
+                cleaned = cleaned.replace("/", "").replace("\\", "")
+                cleaned = re.sub(r'\([^)]*\)', '', cleaned)
+                cleaned = cleaned.strip("_ ")
+                if cleaned != tag:
+                    trace_parts.append(f"一般清洗: '{cleaned}'")
+            if cleaned and cleaned != tag:
+                if cleaned in mapping:
+                    cat = mapping[cleaned]
+                    src = tag_metadata.get(cleaned, {}).get("source_file", "unknown")
+                    trace_parts.append(f"清洗後匹配: '{cleaned}' (來源: {src})")
+                    return cat, " -> ".join(trace_parts) + f" -> {cat}"
+                cleaned_underscored = cleaned.replace(" ", "_")
+                if cleaned_underscored in mapping:
+                    cat = mapping[cleaned_underscored]
+                    src = tag_metadata.get(cleaned_underscored, {}).get("source_file", "unknown")
+                    trace_parts.append(f"清洗後下劃線匹配: '{cleaned_underscored}' (來源: {src})")
+                    return cat, " -> ".join(trace_parts) + f" -> {cat}"
+
+        # 第三层：安全词态还原匹配
+        if clean_inflection and cleaned:
+            for stem in make_stems(cleaned):
+                if stem in mapping:
+                    cat = mapping[stem]
+                    src = tag_metadata.get(stem, {}).get("source_file", "unknown")
+                    trace_parts.append(f"詞態還原: '{stem}' (來源: {src})")
+                    return cat, " -> ".join(trace_parts) + f" -> {cat}"
+            for stem in make_stems(tag):
+                if stem in mapping:
+                    cat = mapping[stem]
+                    src = tag_metadata.get(stem, {}).get("source_file", "unknown")
+                    trace_parts.append(f"詞態還原(原始): '{stem}' (來源: {src})")
+                    return cat, " -> ".join(trace_parts) + f" -> {cat}"
+
+        # 第四层：模糊拆词根匹配
+        if fuzzy:
+            target = cleaned if (clean_inflection and cleaned) else tag
+            parts = [p for p in re.split(r'[ _\-]+', target) if p]
+            if parts:
+                trace_parts.append(f"拆詞: {parts}")
+                for token in reversed(parts):
+                    for stem_form in make_stems(token):
+                        if stem_form in mapping:
+                            cat = mapping[stem_form]
+                            src = tag_metadata.get(stem_form, {}).get("source_file", "unknown")
+                            trace_parts.append(f"反向匹配 token '{token}' -> '{stem_form}' (來源: {src})")
+                            return cat, " -> ".join(trace_parts) + f" -> {cat}"
+                for token in parts:
+                    for stem_form in make_stems(token):
+                        if stem_form in mapping:
+                            cat = mapping[stem_form]
+                            src = tag_metadata.get(stem_form, {}).get("source_file", "unknown")
+                            trace_parts.append(f"正向匹配 token '{token}' -> '{stem_form}' (來源: {src})")
+                            return cat, " -> ".join(trace_parts) + f" -> {cat}"
+                # 词根表匹配（无源文件）
+                for token in reversed(parts):
+                    for stem_form in make_stems(token):
+                        if stem_form in stem_category:
+                            cat = stem_category[stem_form]
+                            trace_parts.append(f"詞根表反向匹配 '{stem_form}' (來源: 詞根推斷)")
+                            return cat, " -> ".join(trace_parts) + f" -> {cat}"
+                for token in parts:
+                    for stem_form in make_stems(token):
+                        if stem_form in stem_category:
+                            cat = stem_category[stem_form]
+                            trace_parts.append(f"詞根表正向匹配 '{stem_form}' (來源: 詞根推斷)")
+                            return cat, " -> ".join(trace_parts) + f" -> {cat}"
+                trace_parts.append("未匹配任何字典/詞根")
+            else:
+                trace_parts.append("無可拆分詞元")
+
+        return None, " -> ".join(trace_parts) + " -> None"
+
     def classify_tags(self, text, no_output_if_not_corresponding, fuzzy_definition, clean_and_inflection):
         node_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # 讀取說明文件內容
         help_text = self._read_help_from_readme(node_dir)
 
         tags_dir = os.path.join(node_dir, "danbooru_tags")
-        mapping, stem_category = load_tag_mapping(tags_dir)
+        mapping, stem_category, tag_metadata = load_tag_mapping(tags_dir)
 
         raw_tags = [t.strip() for t in text.split(",") if t.strip()]
 
-        # 這裡的字串必須與 Parser 節點輸出完全一致
         category_order = [
             "帶有體重標註的體型標籤",
             "畫師標籤",
@@ -235,10 +355,11 @@ class WrapperNode:
         ]
 
         grouped = defaultdict(list)
+        mapping_info_lines = []
 
         for raw in raw_tags:
-            tag_lower = raw.lower()
-            cat = self._find_category(tag_lower, mapping, stem_category, fuzzy_definition, clean_and_inflection)
+            cat, trace = self._get_tag_trace(raw, mapping, stem_category, tag_metadata, fuzzy_definition, clean_and_inflection)
+            mapping_info_lines.append(f"{raw}: {trace}")
             if cat is not None:
                 normalized_cat = self._normalize_category(cat)
                 grouped[normalized_cat].append(raw)
@@ -252,78 +373,11 @@ class WrapperNode:
             if tags:
                 output_dict[cat] = ", ".join(tags)
 
-        return (json.dumps(output_dict, ensure_ascii=False), help_text)
-
-    def _find_category(self, tag, mapping, stem_category, fuzzy, clean_inflection):
-        """漏斗過濾流程方法"""
-        tag = tag.lower().strip()
-
-        # 基礎匹配
-        for stem in make_stems(tag):
-            if stem in mapping:
-                return mapping[stem]
-
-        tag_underscored = tag.replace(" ", "_")
-        if tag_underscored != tag:
-            for stem in make_stems(tag_underscored):
-                if stem in mapping:
-                    return mapping[stem]
-
-        # 智慧清洗層（新增：智慧剝離權重括號核心補丁）
-        if clean_inflection:
-            cleaned = tag.strip()
-            
-            # 使用高階正則表達式判定：是否為權重括號 (tag:1.2) 或純強調括號 (tag)
-            # 它會智慧捕獲中間的 tag 本體，切除冒號與數字，不傷及無辜
-            weight_match = re.match(r'^\(([^:]+)(?::\d+(?:\.\d+)?)?\)$', cleaned)
-            if weight_match:
-                cleaned = weight_match.group(1).strip()
-            else:
-                # 若不是標準兩端包裹的權重括號，則執行普通髒字元移除（斜線與多重括號等）
-                cleaned = cleaned.replace("/", "").replace("\\", "")
-                cleaned = re.sub(r'\([^)]*\)', '', cleaned)
-            
-            cleaned = cleaned.strip("_ ")
-            
-            if cleaned:
-                for stem in make_stems(cleaned):
-                    if stem in mapping:
-                        return mapping[stem]
-
-        # 模糊推斷層
-        if fuzzy:
-            # 如果上面清洗過後有核心主體，優先拿清洗後的詞去拆詞根
-            target_tag = cleaned if (clean_inflection and 'cleaned' in locals() and cleaned) else tag
-            parts = [p for p in re.split(r'[ _\-]+', target_tag) if p]
-            if not parts:
-                return None
-
-            for token in reversed(parts):
-                for stem_form in make_stems(token):
-                    if stem_form in mapping:
-                        return mapping[stem_form]
-                        
-            for token in parts:
-                for stem_form in make_stems(token):
-                    if stem_form in mapping:
-                        return mapping[stem_form]
-
-            for token in reversed(parts):
-                for stem_form in make_stems(token):
-                    if stem_form in stem_category:
-                        return stem_category[stem_form]
-                        
-            for token in parts:
-                for stem_form in make_stems(token):
-                    if stem_form in stem_category:
-                        return stem_category[stem_form]
-
-        return None
+        json_output = json.dumps(output_dict, ensure_ascii=False)
+        mapping_output = "\n".join(mapping_info_lines)
+        return (json_output, help_text, mapping_output)
 
 
-# ==========================================
-# 3. ComfyUI 節點映射登記 (最外層)
-# ==========================================
 NODE_CLASS_MAPPINGS = {
     "WrapperNode": WrapperNode
 }
