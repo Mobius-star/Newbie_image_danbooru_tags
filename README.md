@@ -16,7 +16,7 @@
 修正了原本正則表達式會將單獨括號字串全數抹除導致分類歸入「其他」的 Bug。
 新增條件分流：若是標準權重或強調括號則進行智慧脫殼保留核心詞；若為提示詞尾巴的附帶括號則維持原抹除邏輯。
 
-[v1.0.1] - 2026-06-07 : fix(wrapper): 優化邏輯且新增confirmed_type_and_mapping輸出。
+[v1.0.2] - 2026-06-07 : fix(wrapper): 優化邏輯且新增confirmed_type_and_mapping輸出。
 
 新增confirmed_type_and_mapping輸出，會記錄輸入tags的還原匹配過程 和與位於詞典的位置。
 
